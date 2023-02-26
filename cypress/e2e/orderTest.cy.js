@@ -1,5 +1,5 @@
 import * as user from '../fixtures/user.json';
-import {loginViaUI} from '../support/helper';
+import {loginViaUI, findProductWithRecursion, searchAndClickProduct, findProduct, productFinder, findProductWithRecursionWithTestFailing, findItems} from '../support/helper';
 
 it('Order', () => {
 
@@ -16,6 +16,36 @@ it('Order', () => {
     cy.get('.thumbnails.row').children('li').last().click();
     cy.get('#sort').select('Price Low > High');
     cy.get('.pricetag.jumbotron').children('.productcart').eq(6).click();
+
+    cy.log('**Order products**');
+    cy.get('.productpagecart').children('li').eq(0).click();
+    cy.get('#cart_checkout1').click();
+    cy.get('#checkout_btn').click();
+
+    cy.get('.maintext').should('contain', ' Your Order Has Been Processed!');
+
+})
+
+it.only('Order', () => {
+
+    loginViaUI(user);
+
+    cy.get('#filter_keyword')
+        .type('e')
+        .closest("form")
+        .submit();
+
+    //findProductWithRecursion('Bene1fit Bella Bamba');
+
+    //findProductWithRecursionWithTestFailing('Benefit Bella Bamba');
+
+    //searchAndClickProduct('Benefit Bella Bamba')
+
+    findProduct('Benefit Bella Bamba5');
+
+    //productFinder('Benefit Bella Bamba');
+
+    //findItems('Benefit Bella Bamba')
 
     cy.log('**Order products**');
     cy.get('.productpagecart').children('li').eq(0).click();
