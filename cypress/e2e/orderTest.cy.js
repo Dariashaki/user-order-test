@@ -1,57 +1,47 @@
 import * as user from '../fixtures/user.json';
 import {loginViaUI, findProductWithRecursion, searchAndClickProduct, findProduct, productFinder, findProductWithRecursionWithTestFailing, findItems} from '../support/helper';
+import loginPage from '../support/pages/LoginPage';
+import accountPage from '../support/pages/AccountPage';
+import searchPage from '../support/pages/SearchPage';
+import productPage from '../support/pages/ProductPage';
+import orderResultPage from '../support/pages/OrderResultPage';
+import homePage from '../support/pages/HomePage';
+import cartPage from '../support/pages/CartPage';
 
-it('Order', () => {
+it('Order from home page', () => {
+    loginPage.visit();
+    loginPage.submitLoginForm(user);
 
-    loginViaUI();
+    homePage.visit();
+    const productsInStock = homePage.getProducts().then($products => {
+        console.log('has', $products.has('.productcart'));
+        return cy.wrap(
+            $products.has('.productcart')
+        );
+    });
+    // add product to cart
+    productsInStock.first().get('.productcart').first().click();
 
-    cy.log('**Choose product**');
-    cy.get('.nav-pills.categorymenu').children('li').eq(2).click();
-    cy.get('.thumbnails.row').children('li').eq(0).click();
-    cy.get('.col-md-3.col-sm-6.col-xs-12').children('.thumbnail').eq(0).click();
-    cy.get('.productpagecart').children('li').eq(0).click();
-    cy.get('#cart_quantity50').clear().type('2');
-    cy.get('a.btn.btn-default.mr10.mb10').click();
-    cy.get('.nav-pills.categorymenu').children('li').eq(4).click();
-    cy.get('.thumbnails.row').children('li').last().click();
-    cy.get('#sort').select('Price Low > High');
-    cy.get('.pricetag.jumbotron').children('.productcart').eq(6).click();
+    cartPage.visit();
+    cartPage.checkout();
 
-    cy.log('**Order products**');
-    cy.get('.productpagecart').children('li').eq(0).click();
-    cy.get('#cart_checkout1').click();
-    cy.get('#checkout_btn').click();
-
-    cy.get('.maintext').should('contain', ' Your Order Has Been Processed!');
-
+    orderResultPage.verifySuccess();
 })
 
-it.only('Order', () => {
+it('Order from search page', () => {
+    loginPage.visit();
+    loginPage.submitLoginForm(user);
 
-    loginViaUI(user);
+    accountPage.submitSearchForm('e');
 
-    cy.get('#filter_keyword')
-        .type('e')
-        .closest("form")
-        .submit();
+    const productName = 'Benefit Bella Bamba';
+    searchPage.findProductLink(productName)
+        .click({ force: true });
 
-    //findProductWithRecursion('Bene1fit Bella Bamba');
+    productPage.verifyProductName(productName);
+    productPage.order();
 
-    //findProductWithRecursionWithTestFailing('Benefit Bella Bamba');
-
-    //searchAndClickProduct('Benefit Bella Bamba')
-
-    findProduct('Benefit Bella Bamba5');
-
-    //productFinder('Benefit Bella Bamba');
-
-    //findItems('Benefit Bella Bamba')
-
-    cy.log('**Order products**');
-    cy.get('.productpagecart').children('li').eq(0).click();
-    cy.get('#cart_checkout1').click();
-    cy.get('#checkout_btn').click();
-
-    cy.get('.maintext').should('contain', ' Your Order Has Been Processed!');
-
+    cartPage.checkout();
+    
+    orderResultPage.verifySuccess();
 })

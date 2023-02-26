@@ -3,6 +3,8 @@ import BasePage from "./BasePage";
 class LoginPage extends BasePage{
 
     constructor(){
+        super();
+
         this.loginField = '#loginFrm_loginname';
         this.passwordField = '#loginFrm_loginname';
         this.submitButton = 'button[type="submit"]';
