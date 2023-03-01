@@ -113,7 +113,7 @@ describe('Pet suite', () => {
 
   it('Delete pet', () => {
     cy.log('Delete pet with id');
-    cy.request('DELETE', `/pet/${pet.id}`).then( response => {
+    cy.request('DELETE', `/pet/${pet.id}`).then(response => {
       console.log(response);
    
       expect(response.status).to.be.equal(200);
@@ -121,7 +121,15 @@ describe('Pet suite', () => {
       expect(response.isOkStatusCode).to.be.true;
 
       expect(response.body.message).to.be.equal(pet.id.toString());
-    })
+    });
+
+    cy.request({
+      method: 'GET',
+      url: `/pet/${pet.id}`,
+      failOnStatusCode: false,
+    }).then(response => {
+      expect(response.status).to.be.equal(404);
+    });
   })
 })
 
