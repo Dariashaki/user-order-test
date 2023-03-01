@@ -121,14 +121,14 @@ describe('Pet suite', () => {
       expect(response.isOkStatusCode).to.be.true;
 
       expect(response.body.message).to.be.equal(pet.id.toString());
-    });
 
-    cy.request({
-      method: 'GET',
-      url: `/pet/${pet.id}`,
-      failOnStatusCode: false,
-    }).then(response => {
-      expect(response.status).to.be.equal(404);
+      cy.request({
+        method: 'GET',
+        url: `/pet/${pet.id}`,
+        failOnStatusCode: false,
+      }).then(response => {
+        expect(response.status).to.be.equal(404);
+      });
     });
   })
 })
